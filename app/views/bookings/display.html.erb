@@ -1,0 +1,34 @@
+<body>
+
+
+<% Booking.all.each do |t| %>
+   <b>Train no: <%= t.trainno %></b>
+   <hr/>
+   <b>win_seats: <%= t.win_seats %></b>
+   <hr/>
+   <b>nor_seats: <%= t.nor_seats %></b>
+   <hr/>
+   <b>booking_date: <%= t.created_at.to_s %></b>
+   <hr/>
+   <b>nor_seats_wl: <%=t.nor_seats_wl%></b>
+   <hr/>
+   <b>win_seats_wl: <%=t.win_seats_wl%></b>
+   <hr/>
+   <b>status: <%=t.status%></b>
+   <hr/>
+   <b>total price: <%=t.price%></b>
+   <hr/>
+
+   <hr/>
+<%= t.id %>
+   <%= form_with(url: "/bookings/cancel", method: "post") do %>
+
+   <%= hidden_field_tag 'id', t.id %>
+   <%= t.id %>
+   <%= submit_tag "cancel tickets"  %>
+   <% end %>
+
+<% end %>
+
+
+</body>

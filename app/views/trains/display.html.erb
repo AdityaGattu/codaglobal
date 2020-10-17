@@ -1,0 +1,54 @@
+<body>
+
+
+
+<%= form_with(url: "/trains/search", method:"post") do %>
+
+<% sources=Train.distinct.pluck(:source) %>
+<select name="source">
+<%for source in sources%>
+<option value=<%=source%>> <%=source%></option>
+<%end%>
+</select>
+
+<br/>
+<br/>
+
+<% destination=Train.distinct.pluck(:destination) %>
+<select name="destination">
+<%for des in destination%>
+<option value=<%=des%>> <%=des%></option>
+<%end%>
+</select>
+
+<%= date_field_tag 'date', class:"MyTodo-date" %>
+
+<%= submit_tag "Search", class: "signup-btn-in6" %>
+<% end %>
+
+<% if @trains!=nil %>
+<% @trains.all.each do |t| %>
+   <b>Train no: <%= t.trainno %></b>
+   <hr/>
+   <b>Train name: <%= t.train_name %></b>
+   <hr/>
+   <b>win_seats: <%= t.win_seats %></b>
+   <hr/>
+   <b>nor_seats: <%= t.nor_seats %></b>
+   <hr/>
+   <b><%=t.price%></b>
+   <hr/>
+
+   <%= form_with(url: "/bookings", method:"post") do %>
+   <%= hidden_field_tag 'trainno', t.trainno %>
+   <%= hidden_field_tag 'train_name', t.train_name %>
+   <%= text_field_tag  'win_seats' %>
+   <%= text_field_tag  'nor_seats' %>
+   <%= submit_tag "book tickets"  %>
+   <% end %>
+
+   <hr/>
+<% end %>
+<% end %>
+
+</body>
