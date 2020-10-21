@@ -20,11 +20,11 @@
    <hr/>
 
    <hr/>
-<%= t.id %>
+
    <%= form_with(url: "/bookings/cancel", method: "post") do %>
 
    <%= hidden_field_tag 'id', t.id %>
-   <%= t.id %>
+
    <%= submit_tag "cancel tickets"  %>
    <% end %>
 

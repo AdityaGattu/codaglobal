@@ -5,12 +5,12 @@ class BookingsController < ApplicationController
     nor_seats=params[:nor_seats].to_i
     win_seats=params[:win_seats].to_i
     date=Date.parse session[:date]
-
-    puts nor_seats
-    puts win_seats
-    puts trainno
+    wlnorseats=0
+    wlwinseats=0
 
     val=Train.where(trainno: trainno)
+    puts val[0].nor_seats
+    puts val[0].win_seats
 
     if Search.where(train: trainno,travel_date: date).size == 0
       Search.create(train: trainno,nom_seats: val[0].nor_seats,win_seats: val[0].win_seats,travel_date: date)
@@ -28,10 +28,15 @@ class BookingsController < ApplicationController
       flag1=true
     end
 
+    puts train.nom_seats
+    puts train.win_seats
+    puts nor_seats
+    puts win_seats
+
     if train.win_seats-win_seats>0
-      train.win_seats=train.win_seats-nor_seats
+      train.win_seats=train.win_seats-win_seats
     else
-      wlwinseats=nor_seats-train.win_seats
+      wlwinseats=win_seats-train.win_seats
       train.win_seats=0
       flag2=true
     end
@@ -76,13 +81,17 @@ class BookingsController < ApplicationController
     person=Booking.where(status:"waitlist",date: date,trainno: trainno).order(:created_at)
 
     person.all.each do |p|
-
+      f1=false
+      f2=false
       if win_seats==0 and nor_seats==0
         break
       end
 
+
       if win_seats-p.win_seats_wl>0
         p.win_seats_wl=0
+        win_seats=win_seats-p.win_seats_wl
+        f1=true
       else
         p.win_seats_wl=p.win_seats_wl-win_seats
         win_seats=0
@@ -90,10 +99,19 @@ class BookingsController < ApplicationController
 
       if nor_seats-p.nor_seats_wl>0
         p.nor_seats_wl=0
+        nor_seats=nor_seats-p.nor_seats_wl
+        f2=true
       else
         p.nor_seats_wl=p.nor_seats_wl-win_seats
         nor_seats=0
       end
+
+      if f1 and f2
+        p.status="confirm"
+      end
+
+      p.save
+
     end
     redirect_to bookings_path
   end
